@@ -42,16 +42,25 @@ class ProductController extends Controller
         // ]); // forma vieja
 
         if (request()->status == 'available' && request()->stock == 0) {
-            session()->flash('error', 'If available must have stock');
-            return redirect()->back();
+
+            //session()->flash('error', 'If available must have stock'); // esta linea no hace falta porque agregamos el error con wihtErrors
+
+            return redirect()
+                ->back()
+                ->withInput(request()->all())
+                ->withErrors('If available must have stock');
         }
 
         $product = Product::create(request()->all()); // forma nueva
+        //session()->flash('success', "The new product wiht id {$product->id} was created"); lo llamamos por withSuccess
 
 
         //return redirect()->back(); // lo manda a la accion anterior
         //return redirect()->action('MainController@index');
-        return redirect()->route('products.index'); // recomendado, lo redirecciona mediante una ruta
+        return redirect()
+            ->route('products.index') // recomendado, lo redirecciona mediante una ruta
+            //->with(['success' => "The new product wiht id {$product->id} was created"]) // seria lo mismo que abajo pero de otra manera
+            ->withSuccess("The new product wiht id {$product->id} was created");
     }
     public function show($product)
     {
@@ -87,7 +96,9 @@ class ProductController extends Controller
 
         $product->update(request()->all());
 
-        return redirect()->route('products.index');
+        return redirect()
+            ->route('products.index')
+            ->withSuccess("The product wiht id {$product->id} was edited");
     }
     public function destroy($product)
     {
@@ -95,6 +106,8 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return redirect()->route('products.index');
+        return redirect()
+            ->route('products.index')
+            ->withSuccess("The product wiht id {$product->id} was deleted");
     }
 }

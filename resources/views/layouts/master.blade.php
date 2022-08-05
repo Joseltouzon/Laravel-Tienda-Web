@@ -9,9 +9,16 @@
 </head>
 
 <body>
-    @if (session()->has('error'))
+    
+   {{--  @if (session()->has('error'))
     <div class="alert alert-danger">
         {{ session()->get('error') }}
+    </div>
+    @endif
+    --}} <!-- esto esta comentado porque agregamos el error con whitErrors en el controller de producto --> 
+    @if (session()->has('success'))
+    <div class="alert alert-success">
+        {{ session()->get('success') }}
     </div>
     @endif
 
