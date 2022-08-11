@@ -4,34 +4,40 @@ namespace App\Http\Controllers;
 
 use App\Product; //para usar eloquent hay que llamar al modelo
 use Illuminate\Http\Request;
+use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\DB; //para usar query builder
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-        $products = Product::all(); // usando eloquent con el modelo
+        //$products = Product::all(); // usando eloquent con el modelo
         //$products = DB::table('products')->get(); usando query builder - no recomendable
 
         return view('products.index')->with([
-            'products' => $products,
+            'products' => Product::all(),
         ]);
     }
     public function create()
     {
         return view('products.create');
     }
-    public function store()
+    public function store(ProductRequest $request)
     {
-        $rules = [
-            'title' => ['required', 'max:255'],
-            'description' => ['required', 'max:1000'],
-            'price' => ['required', 'min:1'],
-            'stock' => ['required', 'min:0'],
-            'status' => ['required', 'in:available,unavailable'],
-        ];
+        //$rules = [
+          //  'title' => ['required', 'max:255'],
+            //'description' => ['required', 'max:1000'],
+            //'price' => ['required', 'min:1'],
+            ///'stock' => ['required', 'min:0'],
+            //'status' => ['required', 'in:available,unavailable'],
+        //];
 
-        request()->validate($rules);
+        //request()->validate($rules); $rules y request son llamadas desde el parametro ProductRequest $request en la funcion
 
         // $product = Product::create([
         // 'title' => request()->title,
@@ -41,17 +47,7 @@ class ProductController extends Controller
         // 'status' => request()->status,
         // ]); // forma vieja
 
-        if (request()->status == 'available' && request()->stock == 0) {
-
-            //session()->flash('error', 'If available must have stock'); // esta linea no hace falta porque agregamos el error con wihtErrors
-
-            return redirect()
-                ->back()
-                ->withInput(request()->all())
-                ->withErrors('If available must have stock');
-        }
-
-        $product = Product::create(request()->all()); // forma nueva
+        $product = Product::create($request->validated($request)); // forma nueva
         //session()->flash('success', "The new product wiht id {$product->id} was created"); lo llamamos por withSuccess
 
 
@@ -62,47 +58,47 @@ class ProductController extends Controller
             //->with(['success' => "The new product wiht id {$product->id} was created"]) // seria lo mismo que abajo pero de otra manera
             ->withSuccess("The new product wiht id {$product->id} was created");
     }
-    public function show($product)
+    public function show(Product $product)
     {
         //$product = DB::table('products')->where('id', $product)->first(); 
         //igual que la linea de arriba pero resumido
         //$product = DB::table('products')->find($product); usando query builder - no recomendado
 
-        $product = Product::findOrFail($product); // usando eloquent con el modelo, en caso de que no haya, no muestra null
+        //$product = Product::findOrFail($product); // usando eloquent con el modelo, en caso de que no haya, no muestra null // esta linea no se usa porque llamamos al modelo Product como parametro de la funcion
 
         return view('products.show')->with([
             'product' => $product,
         ]);
     }
-    public function edit($product)
+    public function edit(Product $product)
     {
         return view('products.edit')->with([
-            'product' => Product::findOrFail($product),
+            'product' => $product,
         ]);
     }
-    public function update($product)
+    public function update(ProductRequest $request, Product $product)
     {
-        $rules = [
-            'title' => ['required', 'max:255'],
-            'description' => ['required', 'max:1000'],
-            'price' => ['required', 'min:1'],
-            'stock' => ['required', 'min:0'],
-            'status' => ['required', 'in:available,unavailable'],
-        ];
+        //$rules = [
+          //  'title' => ['required', 'max:255'],
+            //'description' => ['required', 'max:1000'],
+            //'price' => ['required', 'min:1'],
+            //'stock' => ['required', 'min:0'],
+            //'status' => ['required', 'in:available,unavailable'],
+        //];
 
-        request()->validate($rules);
+        //request()->validate($rules); $rules y request son llamadas desde el parametro ProductRequest $request en la funcion
 
-        $product = Product::findOrFail($product);
+        //$product = Product::findOrFail($product); linea innecesaria si agregamos como parametro el modelo Product en la funcion
 
-        $product->update(request()->all());
+        $product->update(request()->validated($request));
 
         return redirect()
             ->route('products.index')
             ->withSuccess("The product wiht id {$product->id} was edited");
     }
-    public function destroy($product)
+    public function destroy(Product $product)
     {
-        $product = Product::findOrFail($product);
+        //$product = Product::findOrFail($product); linea innecesaria si agregamos como parametro el modelo Product en la funcion
 
         $product->delete();
 
