@@ -4,6 +4,7 @@ namespace App;
 
 use App\Cart;
 use App\Order;
+use App\Image;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,11 +27,16 @@ class Product extends Model
 
     public function carts()
     {
-        return $this->BelongsToMany(Cart::class)->withPivot('quantity');
+        return $this->morphedByMany(Cart::class, 'productable')->withPivot('quantity');
     }
 
     public function orders()
     {
-        return $this->BelongsToMany(Order::class)->withPivot('quantity');
+        return $this->morphedByMany(Order::class, 'productable')->withPivot('quantity');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }
