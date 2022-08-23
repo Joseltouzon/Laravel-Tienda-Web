@@ -8,8 +8,10 @@ class MainController extends Controller
 {
     public function index()
     {
+       // $products = Product::where('status', 'available')->get(); // sin scope
+        $products = Product::available()->get(); // usando scope en el modelo product
         return view('welcome')->with([
-            'products' => Product::all(),
+            'products' => $products,
         ]);
     }
 }

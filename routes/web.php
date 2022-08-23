@@ -18,6 +18,10 @@ Route::get('/', 'MainController@index')->name('main');
 
 Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso
 
+Route::resource('products.carts', 'ProductCartController')->only(['store', 'destroy']); 
+
+Route::resource('carts', 'CartController')->only(['index']); 
+
 //Route::get('products', 'ProductController@index')->name('products.index');
 
 //Route::get('products/create','ProductController@create')->name('products.create');
@@ -31,9 +35,6 @@ Route::resource('products', 'ProductController'); // las rutas siguientes estan 
 //Route::match(['put', 'patch'], 'products/{product}','ProductController@update')->name('products.update');
 
 //Route::delete('products/{product}','ProductController@destroy')->name('products.destroy');
-
-
-
 
 Auth::routes();
 
