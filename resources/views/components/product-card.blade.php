@@ -5,7 +5,10 @@
         <h5 class="card-title">{{ $product->title }}</h5>
         <p class="card-text">{{ $product->description }}</p>
         <p class="card-text"><strong>{{ $product->stock }} left</strong></p>
+
         @if (isset($cart))
+
+        <p class="card-text">{{ $product->pivot->quantity }} in your cart <strong>(${{ $product->total }}) </strong></p>
         <form class="d-inline" method="POST" action="{{ route('products.carts.destroy', ['cart' => $cart->id, 'product' => $product->id]) }}">
             @method('DELETE')
             @csrf
@@ -13,6 +16,7 @@
         </form>
 
         @else
+        
         <form class="d-inline" method="POST" action="{{ route('products.carts.store', ['product' => $product->id]) }}">
             @csrf
             <button type="submit" class="btn btn-success">Add to cart</button>
