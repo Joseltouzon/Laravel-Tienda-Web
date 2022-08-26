@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'MainController@index')->name('main');
 
-Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso
+//Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso
 
 Route::resource('products.carts', 'ProductCartController')->only(['store', 'destroy']); 
 

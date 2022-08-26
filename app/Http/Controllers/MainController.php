@@ -8,8 +8,10 @@ class MainController extends Controller
 {
     public function index()
     {
+       // \DB::connection()->enableQueryLog();
+       
        // $products = Product::where('status', 'available')->get(); // sin scope
-        $products = Product::available()->get(); // usando scope en el modelo product
+        $products = Product::all(); // usando scope en el modelo product
         return view('welcome')->with([
             'products' => $products,
         ]);

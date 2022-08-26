@@ -1,26 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Panel;
 
-use App\Product; //para usar eloquent hay que llamar al modelo
+use App\PanelProduct; //para usar eloquent hay que llamar al modelo
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\DB; //para usar query builder
 
 class ProductController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
-
     public function index()
     {
         //$products = Product::all(); // usando eloquent con el modelo
         //$products = DB::table('products')->get(); usando query builder - no recomendable
 
         return view('products.index')->with([
-            'products' => Product::all(),
+            'products' => PanelProduct::without('images')->get(),
         ]);
     }
     public function create()
@@ -47,7 +43,7 @@ class ProductController extends Controller
         // 'status' => request()->status,
         // ]); // forma vieja
 
-        $product = Product::create($request->validated($request)); // forma nueva
+        $product = PanelProduct::create($request->validated($request)); // forma nueva
         //session()->flash('success', "The new product wiht id {$product->id} was created"); lo llamamos por withSuccess
 
 
@@ -58,7 +54,7 @@ class ProductController extends Controller
             //->with(['success' => "The new product wiht id {$product->id} was created"]) // seria lo mismo que abajo pero de otra manera
             ->withSuccess("The new product wiht id {$product->id} was created");
     }
-    public function show(Product $product)
+    public function show(PanelProduct $product)
     {
         //$product = DB::table('products')->where('id', $product)->first(); 
         //igual que la linea de arriba pero resumido
@@ -70,13 +66,13 @@ class ProductController extends Controller
             'product' => $product,
         ]);
     }
-    public function edit(Product $product)
+    public function edit(PanelProduct $product)
     {
         return view('products.edit')->with([
             'product' => $product,
         ]);
     }
-    public function update(ProductRequest $request, Product $product)
+    public function update(ProductRequest $request, PanelProduct $product)
     {
         //$rules = [
           //  'title' => ['required', 'max:255'],
@@ -96,7 +92,7 @@ class ProductController extends Controller
             ->route('products.index')
             ->withSuccess("The product wiht id {$product->id} was edited");
     }
-    public function destroy(Product $product)
+    public function destroy(PanelProduct $product)
     {
         //$product = Product::findOrFail($product); linea innecesaria si agregamos como parametro el modelo Product en la funcion
 
