@@ -6,6 +6,7 @@ use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
 use App\Order;
 use App\Services\CartService;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -44,25 +45,26 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        $user = $request->user();
-        
-        $order = $user->orders()->create([
-            'status' => 'pending',
-        ]);
+        return DB::transaction(function () use($request) {
 
-        $cart = $this->cartService->getFromCookie();
+            $user = $request->user();
 
-        $cartProductsWithQuantity = $cart->products
-                                        ->mapWithKeys(function ($product)
-                                        {
-                                            $element[$product->id] = ['quantity' => $product->pivot->quantity];
+            $order = $user->orders()->create([
+                'status' => 'pending',
+            ]);
 
-                                            return $element;
-                                        });
-                         
-        $order->products()->attach($cartProductsWithQuantity->toArray());   
-        
-        return redirect()->route('orders.payments.create', ['order' => $order]);
+            $cart = $this->cartService->getFromCookie();
+
+            $cartProductsWithQuantity = $cart->products
+                ->mapWithKeys(function ($product) {
+                    $element[$product->id] = ['quantity' => $product->pivot->quantity];
+
+                    return $element;
+                });
+
+            $order->products()->attach($cartProductsWithQuantity->toArray());
+
+            return redirect()->route('orders.payments.create', ['order' => $order]);
+        }, 5);
     }
-
 }
