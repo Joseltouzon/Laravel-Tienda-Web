@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'MainController@index')->name('main');
 
-//Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso
+//Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso, el cual ahora esta en la carpeta panel dentro del os controladores
 
 Route::resource('products.carts', 'ProductCartController')->only(['store', 'destroy']); 
 
@@ -42,4 +42,4 @@ Route::resource('orders.payments', 'OrderPaymentController')->only(['create', 's
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
