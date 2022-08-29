@@ -2,8 +2,10 @@
 
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
+
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
@@ -16,15 +18,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'MainController@index')->name('main');
 
+Route::get('profile', 'ProfileController@edit')->name('profile.edit');
+
+Route::put('profile', 'ProfileController@update')->name('profile.update');
+
 //Route::resource('products', 'ProductController'); // las rutas siguientes estan comentadas porque son llamadas de forma global por medio de este recurso, el cual ahora esta en la carpeta panel dentro del os controladores
 
 Route::resource('products.carts', 'ProductCartController')->only(['store', 'destroy']); 
 
 Route::resource('carts', 'CartController')->only(['index']); 
 
-Route::resource('orders', 'OrderController')->only(['create', 'store']); 
+Route::resource('orders', 'OrderController')
+                                    ->only(['create', 'store'])
+                                    ->middleware(['verified']); 
 
-Route::resource('orders.payments', 'OrderPaymentController')->only(['create', 'store']); 
+Route::resource('orders.payments', 'OrderPaymentController')
+                                    ->only(['create', 'store'])
+                                    ->middleware(['verified']); 
 
 //Route::get('products', 'ProductController@index')->name('products.index');
 
@@ -40,6 +50,8 @@ Route::resource('orders.payments', 'OrderPaymentController')->only(['create', 's
 
 //Route::delete('products/{product}','ProductController@destroy')->name('products.destroy');
 
-Auth::routes();
+Auth::routes([
+    'verify' => true,
+]);
 
 //Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
