@@ -24,7 +24,6 @@ class User extends Authenticatable implements Verificable
         'name',
         'email',
         'password',
-        //'admin_since',
     ];
 
     /**
@@ -44,17 +43,7 @@ class User extends Authenticatable implements Verificable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
-    ];
-
-     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @deprecated Use the "casts" property
-     *
-     * @var array
-     */
-    protected $dates = [
-        'admin_since',
+        'admin_since' => 'datetime',
     ];
 
     public function orders()

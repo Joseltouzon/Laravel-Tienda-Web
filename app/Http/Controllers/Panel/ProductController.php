@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\ProductRequest;
 use Illuminate\Support\Facades\DB; //para usar query builder
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -43,8 +44,13 @@ class ProductController extends Controller
         // 'status' => request()->status,
         // ]); // forma vieja
 
-        $product = PanelProduct::create($request->validated($request)); // forma nueva
+        $product = PanelProduct::create($request->validated()); // forma nueva
         //session()->flash('success', "The new product wiht id {$product->id} was created"); lo llamamos por withSuccess
+        foreach ($request->images as $image) {
+            $product->images()->create([
+                'path' => 'images/' . $image->store('products', 'images'),
+            ]);
+        }
 
 
         //return redirect()->back(); // lo manda a la accion anterior
@@ -86,7 +92,25 @@ class ProductController extends Controller
 
         //$product = Product::findOrFail($product); linea innecesaria si agregamos como parametro el modelo Product en la funcion
 
-        $product->update(request()->validated($request));
+        $product->update($request->validated());
+
+        if ($request->hasFile('images')) {
+
+            foreach ($product->images as $image) {
+                $path = storage_path("app/public/{$image->path}");
+
+                File::delete($path);
+
+                $image->delete();
+            }
+            
+            foreach ($request->images as $image) {
+                $product->images()->create([
+                    'path' => 'images/' . $image->store('products', 'images'),
+                ]);
+            }
+        }
+
 
         return redirect()
             ->route('products.index')
