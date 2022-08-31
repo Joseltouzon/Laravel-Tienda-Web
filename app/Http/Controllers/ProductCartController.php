@@ -44,7 +44,9 @@ class ProductCartController extends Controller
         $cart->products()
             ->syncWithoutDetaching([
                 $product->id => ['quantity' => $quantity + 1], 
-            ]);  
+            ]); 
+            
+        $cart->touch(); // actualiza el tiempo de duracion del carrito cada vez que ingresa un producto nuevo    
 
         $cookie = $this->cartService->makeCookie($cart);    
 
@@ -61,6 +63,8 @@ class ProductCartController extends Controller
     public function destroy(Product $product, Cart $cart)
     {
         $cart->products()->detach($product->id);
+
+        $cart->touch();
 
         $cookie = $this->cartService->makeCookie($cart);
 
