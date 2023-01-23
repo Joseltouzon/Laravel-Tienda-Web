@@ -1,1 +1,1 @@
-###Tienda realizada con Laravel 7
+## Tienda realizada con Laravel 7
